@@ -1,6 +1,7 @@
 module com.example.gui_db {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
 
     opens com.example.gui_db to javafx.fxml;

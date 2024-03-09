@@ -1,5 +1,6 @@
 package com.example.gui_db;
 
+import com.example.gui_db.models.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 
+import java.sql.*;
 import java.util.ArrayList;
 
 public class HelloController {
@@ -30,10 +32,43 @@ public class HelloController {
     }
     @FXML
     public void onloadBTNClick(){
-        System.out.println("Hello");
-        contentList.add("Eins");
-        contentList.add("Zwei");
-        contentLV.getItems().addAll(contentList);
+        Login login = Login.getInstance();
+        Connection dbConn = null;
+        Statement stm = null;
+
+        try {
+            dbConn = DriverManager.getConnection(login.getHost(), login.getUser(), login.getPassword());
+            stm = dbConn.createStatement();
+            String sql = "SET search_path TO company";
+            stm.executeUpdate(sql);
+
+            sql = "SELECT * FROM t_human_resources "
+                    + "INNER JOIN t_city ON t_city.postal_code = t_human_resources.postal_code";
+            ResultSet rs = stm.executeQuery(sql);
+            while (rs.next()) {
+                contentList.add(rs.getString("first_name") + ", " +
+                        rs.getString("last_name") + ", " +
+                        rs.getDate("date_of_birth") + ", "+
+                        rs.getInt("postal_code") + ", " +
+                        rs.getString("city") + ", "
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                stm.close();
+            } catch (Exception e) {
+            }
+            try {
+                dbConn.close();
+            } catch (Exception e) {
+            }
+        }
+
+        for(String person:contentList){
+            contentLV.getItems().add(person);
+        }
 
 
 
