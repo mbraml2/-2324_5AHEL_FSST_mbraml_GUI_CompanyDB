@@ -18,8 +18,6 @@ public class HelloController {
     @FXML
     private ListView<String> contentLV = new ListView<>();
     private ArrayList<String> contentList = new ArrayList<>();
-    @FXML
-    private Button loadBTN;
 
     @FXML
     public void initialize(){
@@ -75,13 +73,18 @@ public class HelloController {
 
         contentLV.getItems().clear();
 
-
         for(String person:contentList){
             contentLV.getItems().add(person);
         }
+    }
 
+    public void onDeleteBTNClick(){
+        ObservableList selectedIndices = contentLV.getSelectionModel().getSelectedIndices();
 
-
+        for(Object o : selectedIndices){
+            System.out.println(contentList.get((int)o));
+            String firstName = contentList.get((int)o);
+        }
 
     }
 }

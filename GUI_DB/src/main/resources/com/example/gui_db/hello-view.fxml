@@ -18,7 +18,7 @@
                <Insets right="10.0" />
             </HBox.margin>
          </Button>
-         <Button alignment="CENTER" mnemonicParsing="false" text="Delete Selected" />
+         <Button alignment="CENTER" mnemonicParsing="false" onAction="#onDeleteBTNClick" text="Delete Selected" />
       </children>
    </HBox>
 </VBox>
