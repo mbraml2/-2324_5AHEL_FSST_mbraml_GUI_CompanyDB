@@ -11,5 +11,14 @@
 
     <Label text="Human Resources" />
    <ListView fx:id="contentLV" prefHeight="200.0" prefWidth="200.0" />
-   <Button fx:id="loadBTN" mnemonicParsing="false" onAction="#onloadBTNClick" text="Load DB Content" />
+   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <children>
+         <Button fx:id="loadBTN" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" onAction="#onloadBTNClick" text="Load Content">
+            <HBox.margin>
+               <Insets right="10.0" />
+            </HBox.margin>
+         </Button>
+         <Button alignment="CENTER" mnemonicParsing="false" text="Delete Selected" />
+      </children>
+   </HBox>
 </VBox>
