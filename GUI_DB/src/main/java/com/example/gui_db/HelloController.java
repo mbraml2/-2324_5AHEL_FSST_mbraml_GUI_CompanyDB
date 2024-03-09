@@ -4,6 +4,7 @@ import com.example.gui_db.models.Login;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -36,6 +37,8 @@ public class HelloController {
         Connection dbConn = null;
         Statement stm = null;
 
+        contentList.clear();
+
         try {
             dbConn = DriverManager.getConnection(login.getHost(), login.getUser(), login.getPassword());
             stm = dbConn.createStatement();
@@ -55,6 +58,10 @@ public class HelloController {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            Alert sqlAlert = new Alert(Alert.AlertType.ERROR);
+            sqlAlert.setTitle("Fehler");
+            sqlAlert.setHeaderText("Fehler beim Datenbank Zugriff");
+            sqlAlert.showAndWait();
         } finally {
             try {
                 stm.close();
@@ -65,6 +72,9 @@ public class HelloController {
             } catch (Exception e) {
             }
         }
+
+        contentLV.getItems().clear();
+
 
         for(String person:contentList){
             contentLV.getItems().add(person);
