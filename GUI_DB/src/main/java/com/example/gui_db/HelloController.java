@@ -6,13 +6,13 @@ import com.example.gui_db.models.Person;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
 public class HelloController {
 
@@ -21,12 +21,11 @@ public class HelloController {
     private Label welcomeText;
     @FXML
     private ListView<String> contentLV = new ListView<>();
-    private ArrayList<String> contentList = new ArrayList<>();
+    private Hashtable<Integer, String> contentList = new Hashtable<>();
 
     @FXML
     public void initialize() {
-        System.out.println("INIT");
-
+        contentLV.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     @FXML
@@ -39,7 +38,9 @@ public class HelloController {
         Login login = Login.getInstance();
         Connection dbConn = null;
         Statement stm = null;
+
         ArrayList<Person> peopleArray = new ArrayList<>();
+        contentList.clear();
 
         try {
             dbConn = DriverManager.getConnection(login.getHost(), login.getUser(), login.getPassword());
@@ -60,8 +61,9 @@ public class HelloController {
                 newPerson.setPostalCode(rs.getInt("postal_code"));
                 newPerson.setCity(rs.getString("city"));
                 peopleArray.add(newPerson);
+                contentList.put(rs.getInt("person_id"), newPerson.toString());
             }
-            hResources.setPeople(peopleArray);
+            hResources.setPeople(peopleArray); // sets hResources to people from DB
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -82,14 +84,9 @@ public class HelloController {
                 System.out.println(e.getMessage());
             }
         }
-        contentList.clear();
-        contentLV.getItems().clear();
 
-        for (Person person : hResources.getPeople()) {
-            contentList.add(person.toString());
-        }
-
-        for(String person:contentList){
+        contentLV.getItems().clear();   // clears listview
+        for (String person : contentList.values()) { // loads content list strings into ListView
             contentLV.getItems().add(person);
         }
     }
@@ -97,11 +94,55 @@ public class HelloController {
 
     @FXML
     public void onDeleteBTNClick() {
-        ObservableList selectedIndices = contentLV.getSelectionModel().getSelectedIndices();
+        ObservableList selectedIndices = contentLV.getSelectionModel().getSelectedItems();
+
+        ArrayList<Integer> toDeleteIDs = new ArrayList<>(); // Collects the IDs of the people we want to delete
 
         for (Object o : selectedIndices) {
-            System.out.println(contentList.get((int) o));
-            String firstName = contentList.get((int) o);
+            Enumeration<Integer> idKeys = contentList.keys();
+            while (idKeys.hasMoreElements()) {
+                int key = idKeys.nextElement();
+                if (contentList.get(key).equals(o.toString())) {
+                    toDeleteIDs.add(key);
+                }
+            }
         }
+
+        System.out.println(toDeleteIDs);
+
+        Connection dbConn = null;
+        Statement stm = null;
+        Login login = Login.getInstance();
+
+        for (Integer id : toDeleteIDs) { // Deletes people from DB by person_id
+            try {
+                dbConn = DriverManager.getConnection(login.getHost(), login.getUser(), login.getPassword());
+
+                stm = dbConn.createStatement();
+                String sql = "SET search_path TO company";
+                stm.executeUpdate(sql);
+
+                sql = "DELETE FROM t_human_resources WHERE person_id = "+ id;
+                stm.executeUpdate(sql);
+
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    stm.close();
+                } catch (Exception e) {
+                }
+                try {
+                    dbConn.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        Alert deleteAlert = new Alert(Alert.AlertType.INFORMATION);
+        deleteAlert.setTitle("Succesful Deleted");
+        deleteAlert.setContentText("Successfully deleted "+ toDeleteIDs.size()+ " items");
+        deleteAlert.showAndWait();
+
+
     }
 }
