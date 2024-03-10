@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class HumanResources {
     private ArrayList<Person> people;
+    public HumanResources(){}
 
     public HumanResources(ArrayList<Person> people) {
         this.people = people;
