@@ -3,16 +3,22 @@ package com.example.gui_db;
 import com.example.gui_db.models.HumanResources;
 import com.example.gui_db.models.Login;
 import com.example.gui_db.models.Person;
+import com.example.gui_db.models.Project;
+import com.google.gson.Gson;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+
+import com.google.gson.GsonBuilder;
 
 public class HelloController {
 
@@ -122,7 +128,7 @@ public class HelloController {
                 String sql = "SET search_path TO company";
                 stm.executeUpdate(sql);
 
-                sql = "DELETE FROM t_human_resources WHERE person_id = "+ id;
+                sql = "DELETE FROM t_human_resources WHERE person_id = " + id;
                 stm.executeUpdate(sql);
 
             } catch (SQLException e) {
@@ -140,14 +146,54 @@ public class HelloController {
         }
         Alert deleteAlert = new Alert(Alert.AlertType.INFORMATION);
         deleteAlert.setTitle("Succesful Deleted");
-        deleteAlert.setContentText("Successfully deleted "+ toDeleteIDs.size()+ " items");
+        deleteAlert.setContentText("Successfully deleted " + toDeleteIDs.size() + " items");
         deleteAlert.showAndWait();
 
 
     }
 
     @FXML
-    public void onLoadFromJsonBTNClick(){
-        System.out.println("HEY");
+    public void onLoadFromJsonBTNClick() {
+        try {
+            FileReader reader = new FileReader("C:\\0_TEMP\\human_resources.json");
+            Gson gsonObj = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+            HumanResources hrObj = gsonObj.fromJson(reader, HumanResources.class);
+
+            for (Person person : hrObj.getPeople()) {
+                Connection dbConn = null;
+                Statement stm = null;
+                Login login = Login.getInstance();
+
+                try {
+                    dbConn = DriverManager.getConnection(login.getHost(), login.getUser(), login.getPassword());
+                    stm = dbConn.createStatement();
+                    String sql = "SET search_path TO company";
+                    stm.executeUpdate(sql);
+
+                    sql = "INSERT INTO t_human_resources(first_name, last_name, gender, date_of_birth, postal_code) " +
+                            "VALUES ('" +
+                            person.getFirstName() + "','" +
+                            person.getLastName() + "','" +
+                            person.getGender() + "','" +
+                            person.getDateOfBirth().toString() + "','" +
+                            person.getPostalCode() +
+                            "')";
+                    stm.executeUpdate(sql);
+                } catch (SQLException e) {
+                    System.out.println(e.getMessage());
+                } finally {
+                    try {
+                        stm.close();
+                    } catch (Exception e) {
+                    }
+                    try {
+                        dbConn.close();
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
