@@ -18,7 +18,10 @@
                <Insets right="10.0" />
             </HBox.margin>
          </Button>
-         <Button alignment="CENTER" mnemonicParsing="false" onAction="#onDeleteBTNClick" text="Delete Selected" />
+         <Button alignment="CENTER" mnemonicParsing="false" onAction="#onDeleteBTNClick" text="Delete Selected">
+            <HBox.margin>
+               <Insets right="10.0" />
+            </HBox.margin></Button>
          <Button mnemonicParsing="false" onAction="#onLoadFromJsonBTNClick" text="Load JSON" />
       </children>
    </HBox>

@@ -26,7 +26,7 @@ public class HelloController {
     @FXML
     private Label welcomeText;
     @FXML
-    private ListView<String> contentLV = new ListView<>();
+    private ListView contentLV = new ListView<>();
     private Hashtable<Integer, String> contentList = new Hashtable<>();
 
     @FXML
@@ -66,6 +66,8 @@ public class HelloController {
                 newPerson.setEmail(rs.getString("email"));
                 newPerson.setPostalCode(rs.getInt("postal_code"));
                 newPerson.setCity(rs.getString("city"));
+                newPerson.setStreet(rs.getString("street"));
+                newPerson.setStreetNum(rs.getInt("streetNum"));
                 peopleArray.add(newPerson);
                 contentList.put(rs.getInt("person_id"), newPerson.toString());
             }
@@ -170,13 +172,15 @@ public class HelloController {
                     String sql = "SET search_path TO company";
                     stm.executeUpdate(sql);
 
-                    sql = "INSERT INTO t_human_resources(first_name, last_name, gender, date_of_birth, postal_code) " +
+                    sql = "INSERT INTO t_human_resources(first_name, last_name, gender, date_of_birth, postal_code,street,streetNum) " +
                             "VALUES ('" +
                             person.getFirstName() + "','" +
                             person.getLastName() + "','" +
                             person.getGender() + "','" +
                             person.getDateOfBirth().toString() + "','" +
-                            person.getPostalCode() +
+                            person.getPostalCode()+ "','" +
+                            person.getStreet() + "','" +
+                            person.getStreetNum() +
                             "')";
                     stm.executeUpdate(sql);
                 } catch (SQLException e) {
@@ -192,6 +196,12 @@ public class HelloController {
                     }
                 }
             }
+
+            contentLV.getItems().clear();
+            for (Person person : hrObj.getPeople()) {
+                contentLV.getItems().add(person);
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
