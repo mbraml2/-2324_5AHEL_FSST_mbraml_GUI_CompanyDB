@@ -7,8 +7,8 @@ public class Login {
 
     private static Login instance = new Login();
     private final String loginPath = "c:/Geheim/login.txt";
-    private final String host = "jdbc:postgresql://localhost:54321/mbraml";
-    //private final String host = "jdbc:postgresql://xserv:5432/mbraml";
+    //private final String host = "jdbc:postgresql://localhost:54321/mbraml";
+    private final String host = "jdbc:postgresql://xserv:5432/mbraml";
     private String user;
     private String password;
 

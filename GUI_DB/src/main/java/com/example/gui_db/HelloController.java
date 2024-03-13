@@ -145,4 +145,9 @@ public class HelloController {
 
 
     }
+
+    @FXML
+    public void onLoadFromJsonBTNClick(){
+        System.out.println("HEY");
+    }
 }

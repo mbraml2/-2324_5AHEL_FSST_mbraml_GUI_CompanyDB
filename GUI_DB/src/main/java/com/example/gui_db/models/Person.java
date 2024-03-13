@@ -15,7 +15,10 @@ public class Person {
     private int postalCode;
     private String city;
     private ArrayList<Project> projects;
-    public Person(){}
+
+    public Person() {
+    }
+
     public Person(String firstName, String lastName, String gender, String dateOfBirth, String email, String street, int streetNum, int postalCode, String city, ArrayList<Project> projects) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -113,14 +116,19 @@ public class Person {
     public String toString() {
         String output = firstName + " " + lastName + ", " +
                 dateOfBirth + ", " +
-                street + " "+ streetNum + ", " +
-                postalCode + " "+ city + "\n|";
+                street + " " + streetNum + ", " +
+                postalCode + " " + city;
+        output += "\n|";
 
-        /*
-        for(Project project:projects){
-            output += (project.getDescription()+"|");
+        if (projects == null) {
+            output += "none|";
+        } else {
+            for (Project project : projects) {
+                output += (project.getDescription() + "|");
+            }
         }
-         */
+
+
         return output;
     }
 }
